@@ -2,7 +2,7 @@ package org.sonatype.http.client.detector;
 
 import org.sonatype.guice.bean.containers.InjectedTestCase;
 import org.sonatype.http.client.detector.properties.IsStateless;
-import org.sonatype.http.client.detector.properties.IsTool;
+import org.sonatype.http.client.detector.properties.IsCliTool;
 import org.sonatype.http.client.detector.ua.SonatypeNexus;
 import org.sonatype.http.client.detector.ua.SonatypeNexus.NexusClient;
 
@@ -25,14 +25,14 @@ public class SimpleDetectorTest
         assertEquals( "1", client.getClientMajorVersionString() );
         assertEquals( "1.9.0", client.getClientFullVersionString() );
         assertEquals( 1.0f, client.getScore() );
-        
-        assertEquals( Boolean.TRUE, client.hasProperty( IsStateless.class ) );
-        assertEquals( Boolean.TRUE, client.hasProperty( IsTool.class ) );
-        
+
+        assertEquals( true, client.hasProperty( IsStateless.class ) );
+        assertEquals( true, client.hasProperty( IsCliTool.class ) );
+
         assertTrue( client instanceof NexusClient );
-        
-        NexusClient nexusClient = (NexusClient)client;
-        
+
+        NexusClient nexusClient = (NexusClient) client;
+
         assertEquals( "OSS", nexusClient.getEdition() );
         assertEquals( "Mac OS X", nexusClient.getOsName() );
         assertEquals( "10.6.6", nexusClient.getOsVersion() );
@@ -41,7 +41,7 @@ public class SimpleDetectorTest
 
         assertEquals( "httpClient", nexusClient.getRrsProviderId() );
         assertEquals( "1.9.0", nexusClient.getRrsProviderVersion() );
-        
+
         assertEquals( "foo", nexusClient.getCustomization() );
     }
 
@@ -61,14 +61,14 @@ public class SimpleDetectorTest
         assertEquals( "1", client.getClientMajorVersionString() );
         assertEquals( "1.9.0", client.getClientFullVersionString() );
         assertEquals( 1.0f, client.getScore() );
-        
-        assertEquals( Boolean.TRUE, client.hasProperty( IsStateless.class ) );
-        assertEquals( Boolean.TRUE, client.hasProperty( IsTool.class ) );
-        
+
+        assertEquals( true, client.hasProperty( IsStateless.class ) );
+        assertEquals( true, client.hasProperty( IsCliTool.class ) );
+
         assertTrue( client instanceof NexusClient );
-        
-        NexusClient nexusClient = (NexusClient)client;
-        
+
+        NexusClient nexusClient = (NexusClient) client;
+
         assertEquals( "OSS", nexusClient.getEdition() );
         assertEquals( "Mac OS X", nexusClient.getOsName() );
         assertEquals( "10.6.6", nexusClient.getOsVersion() );
@@ -77,7 +77,7 @@ public class SimpleDetectorTest
 
         assertNull( nexusClient.getRrsProviderId() );
         assertNull( nexusClient.getRrsProviderVersion() );
-        
+
         assertNull( nexusClient.getCustomization() );
     }
 }

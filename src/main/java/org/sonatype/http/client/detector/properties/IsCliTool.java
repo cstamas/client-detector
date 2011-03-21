@@ -5,7 +5,11 @@ package org.sonatype.http.client.detector.properties;
  * 
  * @author cstamas
  */
-public interface IsTool
+public class IsCliTool
+    extends BooleanProperty
 {
-
+    public IsCliTool( boolean value )
+    {
+        super( value );
+    }
 }

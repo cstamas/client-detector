@@ -5,7 +5,11 @@ package org.sonatype.http.client.detector.properties;
  * 
  * @author cstamas
  */
-public interface IsBrowser
+public class IsBrowser
+    extends BooleanProperty
 {
-
+    public IsBrowser( boolean value )
+    {
+        super( value );
+    }
 }

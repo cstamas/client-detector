@@ -5,7 +5,11 @@ package org.sonatype.http.client.detector.properties;
  * 
  * @author cstamas
  */
-public interface IsHandheld
+public class IsHandheld
+    extends BooleanProperty
 {
-
+    public IsHandheld( boolean value )
+    {
+        super( value );
+    }
 }

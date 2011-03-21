@@ -1,5 +1,7 @@
 package org.sonatype.http.client.detector.ua;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,8 +12,17 @@ import org.sonatype.http.client.detector.AbstractClientMatcher;
 import org.sonatype.http.client.detector.ClientMatcher;
 import org.sonatype.http.client.detector.PlexusUtilsOs;
 import org.sonatype.http.client.detector.SimpleClient;
+import org.sonatype.http.client.detector.properties.ClientFullVersion;
+import org.sonatype.http.client.detector.properties.ClientMajorVersion;
+import org.sonatype.http.client.detector.properties.ClientOsFamily;
+import org.sonatype.http.client.detector.properties.IsCliTool;
 import org.sonatype.http.client.detector.properties.IsStateless;
-import org.sonatype.http.client.detector.properties.IsTool;
+import org.sonatype.http.client.detector.properties.JavaOsArch;
+import org.sonatype.http.client.detector.properties.JavaOsName;
+import org.sonatype.http.client.detector.properties.JavaOsVersion;
+import org.sonatype.http.client.detector.properties.JavaVersion;
+import org.sonatype.http.client.detector.properties.Property;
+import org.sonatype.http.client.detector.properties.StringProperty;
 
 @Named
 @Singleton
@@ -40,8 +51,6 @@ public class SonatypeNexus
         }
 
         final String clientOsFamily = PlexusUtilsOs.getPUOsFamilyFromJavaOsNameSystemProperties( m.group( 3 ) );
-
-        final String clientFamily = FAMILY;
 
         final String clientFullVersionString = m.group( 1 );
 
@@ -73,94 +82,124 @@ public class SonatypeNexus
             customization = m.group( 10 ).substring( 1 );
         }
 
-        return new NexusClient( clientOsFamily, clientFamily, clientMajorVersionString, clientFullVersionString,
-            edition, osName, osVersion, osArch, javaVersion, rrsProviderId, rrsProviderVersion, customization );
+        ArrayList<Property> properties = new ArrayList<Property>();
+
+        // add known properties
+        properties.add( new IsStateless( true ) );
+        properties.add( new IsCliTool( true ) );
+
+        properties.add( new ClientOsFamily( clientOsFamily ) );
+        properties.add( new ClientMajorVersion( clientMajorVersionString ) );
+        properties.add( new ClientFullVersion( clientFullVersionString ) );
+
+        properties.add( new JavaOsName( osName ) );
+        properties.add( new JavaOsVersion( osVersion ) );
+        properties.add( new JavaOsArch( osArch ) );
+        properties.add( new JavaVersion( javaVersion ) );
+
+        // Nexus specific properties
+        // edition
+        properties.add( new NexusEdition( edition ) );
+
+        if ( rrsProviderId != null )
+        {
+            // rrsProviderId
+            properties.add( new NexusRemoteRepositoryStorageProviderId( rrsProviderId ) );
+            // rrsProviderVersion
+            properties.add( new NexusRemoteRepositoryStorageProviderVersion( rrsProviderVersion ) );
+        }
+
+        // customization
+        if ( customization != null )
+        {
+            properties.add( new NexusRemoteRepositoryStorageCustomization( customization ) );
+        }
+
+        return new NexusClient( FAMILY, properties );
+    }
+
+    public static class NexusEdition
+        extends StringProperty
+    {
+        public NexusEdition( final String value )
+        {
+            super( value );
+        }
+    }
+
+    public static class NexusRemoteRepositoryStorageProviderId
+        extends StringProperty
+    {
+        public NexusRemoteRepositoryStorageProviderId( final String value )
+        {
+            super( value );
+        }
+    }
+
+    public static class NexusRemoteRepositoryStorageProviderVersion
+        extends StringProperty
+    {
+        public NexusRemoteRepositoryStorageProviderVersion( final String value )
+        {
+            super( value );
+        }
+    }
+
+    public static class NexusRemoteRepositoryStorageCustomization
+        extends StringProperty
+    {
+        public NexusRemoteRepositoryStorageCustomization( final String value )
+        {
+            super( value );
+        }
     }
 
     public static class NexusClient
         extends SimpleClient
     {
-        private final String edition;
-
-        private final String osName;
-
-        private final String osVersion;
-
-        private final String osArch;
-
-        private final String javaVersion;
-
-        private final String rrsProviderId;
-
-        private final String rrsProviderVersion;
-
-        private final String customization;
-
-        public NexusClient( String clientOsFamily, String clientFamily, String clientMajorVersionString,
-                            String clientFullVersionString, String edition, String osName, String osVersion,
-                            String osArch, String javaVersion, String rrsProviderId, String rrsProviderVersion,
-                            String customization )
+        public NexusClient( final String clientFamily, final List<Property> properties )
         {
-            super( 1.0f, clientOsFamily, clientFamily, clientMajorVersionString, clientFullVersionString, null );
-
-            this.edition = edition;
-
-            this.osName = osName;
-
-            this.osVersion = osVersion;
-
-            this.osArch = osArch;
-
-            this.javaVersion = javaVersion;
-
-            this.rrsProviderId = rrsProviderId;
-
-            this.rrsProviderVersion = rrsProviderVersion;
-
-            this.customization = customization;
-
-            getProperties().put( IsStateless.class, Boolean.TRUE );
-            getProperties().put( IsTool.class, Boolean.TRUE );
+            super( 1.0f, clientFamily, properties );
         }
 
         public String getEdition()
         {
-            return edition;
+            return getStringPropertyValue( NexusEdition.class );
         }
 
         public String getOsName()
         {
-            return osName;
+            return getStringPropertyValue( JavaOsName.class );
         }
 
         public String getOsVersion()
         {
-            return osVersion;
+            return getStringPropertyValue( JavaOsVersion.class );
         }
 
         public String getOsArch()
         {
-            return osArch;
+            return getStringPropertyValue( JavaOsArch.class );
         }
 
         public String getJavaVersion()
         {
-            return javaVersion;
+            return getStringPropertyValue( JavaVersion.class );
         }
 
         public String getRrsProviderId()
         {
-            return rrsProviderId;
+            return getStringPropertyValue( NexusRemoteRepositoryStorageProviderId.class );
         }
 
         public String getRrsProviderVersion()
         {
-            return rrsProviderVersion;
+            return getStringPropertyValue( NexusRemoteRepositoryStorageProviderVersion.class );
         }
 
         public String getCustomization()
         {
-            return customization;
+            return getStringPropertyValue( NexusRemoteRepositoryStorageCustomization.class );
         }
     }
 }

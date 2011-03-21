@@ -5,7 +5,11 @@ package org.sonatype.http.client.detector.properties;
  * 
  * @author cstamas
  */
-public interface IsStateful
+public class IsStateful
+    extends BooleanProperty
 {
-
+    public IsStateful( boolean value )
+    {
+        super( value );
+    }
 }
