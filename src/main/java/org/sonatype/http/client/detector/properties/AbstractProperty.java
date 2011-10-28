@@ -1,17 +1,25 @@
 package org.sonatype.http.client.detector.properties;
 
-public class AbstractProperty
-    implements Property
+public class AbstractProperty<T>
+    implements Property<T>
 {
-    private final String stringValue;
 
-    public AbstractProperty( final String stringValue )
+    private final T value;
+
+    public AbstractProperty( final T value )
     {
-        this.stringValue = stringValue;
+        this.value = value;
     }
 
+    @Override
     public String stringValue()
     {
-        return stringValue;
+        return String.valueOf( value() );
+    }
+
+    @Override
+    public T value()
+    {
+        return value;
     }
 }

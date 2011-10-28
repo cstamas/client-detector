@@ -1,7 +1,7 @@
 package org.sonatype.http.client.detector.properties;
 
 /**
- * Property for Java vendor string, as it would be returned by command: {@code em.getProperty(“java.vendor”)} call.
+ * Property for Java vendor string, as it would be returned by command: {@code em.getProperty("java.vendor")} call.
  * Some clients does send thins information in their UA.
  * 
  * @author cstamas

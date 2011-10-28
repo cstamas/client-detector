@@ -1,20 +1,23 @@
 package org.sonatype.http.client.detector.ua;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.http.client.detector.AbstractClientMatcher;
+import org.sonatype.http.client.detector.ClientMatch;
 import org.sonatype.http.client.detector.ClientMatcher;
-import org.sonatype.http.client.detector.PlexusUtilsOs;
-import org.sonatype.http.client.detector.SimpleClient;
+import org.sonatype.http.client.detector.internal.ClientImpl;
+import org.sonatype.http.client.detector.internal.ClientMatchImpl;
+import org.sonatype.http.client.detector.internal.PlexusUtilsOs;
+import org.sonatype.http.client.detector.properties.ClientEdition;
 import org.sonatype.http.client.detector.properties.ClientFullVersion;
 import org.sonatype.http.client.detector.properties.ClientMajorVersion;
 import org.sonatype.http.client.detector.properties.ClientOsFamily;
+import org.sonatype.http.client.detector.properties.ClientSubsystem;
 import org.sonatype.http.client.detector.properties.IsCliTool;
 import org.sonatype.http.client.detector.properties.IsStateless;
 import org.sonatype.http.client.detector.properties.JavaOsArch;
@@ -30,16 +33,20 @@ public class SonatypeNexus
     extends AbstractClientMatcher
     implements ClientMatcher
 {
+
     public static final String FAMILY = "nexus";
 
     // "Nexus/1.9.0 (OSS; Mac OS X; 10.6.6; x86_64; 1.6.22_22) httpClient/1.9.0 foo"
     private static final Pattern nexusUAPattern =
-        Pattern.compile( "^Nexus/([0-9\\.]+) \\(([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+)\\)( ([a-zA-Z0-9\\-_\\. ]+)/([0-9\\.]+)( (.*))?)?$" );
+        Pattern.compile(
+            "^Nexus/([0-9\\.]+) \\(([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+); ([a-zA-Z0-9\\-_\\. ]+)\\)( ([a-zA-Z0-9\\-_\\. ]+)/([0-9\\.]+)( (.*))?)?$" );
 
-    public NexusClient match( final String UAString )
+    @Override
+    public List<ClientMatch> getMatches( final String UAString )
     {
         if ( !UAString.startsWith( "Nexus/" ) )
         {
+            // no no, this is wrong here, it MUST start with "Nexus/"
             return null;
         }
 
@@ -96,13 +103,15 @@ public class SonatypeNexus
         properties.add( new JavaOsVersion( osVersion ) );
         properties.add( new JavaOsArch( osArch ) );
         properties.add( new JavaVersion( javaVersion ) );
+        properties.add( new ClientEdition( edition ) );
 
         // Nexus specific properties
         // edition
-        properties.add( new NexusEdition( edition ) );
 
         if ( rrsProviderId != null )
         {
+            // we deal with Nexus RRS "subsystem"
+            properties.add( new ClientSubsystem( "rrs" ) );
             // rrsProviderId
             properties.add( new NexusRemoteRepositoryStorageProviderId( rrsProviderId ) );
             // rrsProviderVersion
@@ -115,21 +124,13 @@ public class SonatypeNexus
             properties.add( new NexusRemoteRepositoryStorageCustomization( customization ) );
         }
 
-        return new NexusClient( FAMILY, properties );
-    }
-
-    public static class NexusEdition
-        extends StringProperty
-    {
-        public NexusEdition( final String value )
-        {
-            super( value );
-        }
+        return Collections.<ClientMatch>singletonList( new ClientMatchImpl( 100, new NexusClient( properties ) ) );
     }
 
     public static class NexusRemoteRepositoryStorageProviderId
         extends StringProperty
     {
+
         public NexusRemoteRepositoryStorageProviderId( final String value )
         {
             super( value );
@@ -139,6 +140,7 @@ public class SonatypeNexus
     public static class NexusRemoteRepositoryStorageProviderVersion
         extends StringProperty
     {
+
         public NexusRemoteRepositoryStorageProviderVersion( final String value )
         {
             super( value );
@@ -148,6 +150,7 @@ public class SonatypeNexus
     public static class NexusRemoteRepositoryStorageCustomization
         extends StringProperty
     {
+
         public NexusRemoteRepositoryStorageCustomization( final String value )
         {
             super( value );
@@ -155,36 +158,12 @@ public class SonatypeNexus
     }
 
     public static class NexusClient
-        extends SimpleClient
+        extends ClientImpl
     {
-        public NexusClient( final String clientFamily, final List<Property> properties )
-        {
-            super( 1.0f, clientFamily, properties );
-        }
 
-        public String getEdition()
+        public NexusClient( final List<Property> properties )
         {
-            return getStringPropertyValue( NexusEdition.class );
-        }
-
-        public String getOsName()
-        {
-            return getStringPropertyValue( JavaOsName.class );
-        }
-
-        public String getOsVersion()
-        {
-            return getStringPropertyValue( JavaOsVersion.class );
-        }
-
-        public String getOsArch()
-        {
-            return getStringPropertyValue( JavaOsArch.class );
-        }
-
-        public String getJavaVersion()
-        {
-            return getStringPropertyValue( JavaVersion.class );
+            super( FAMILY, properties );
         }
 
         public String getRrsProviderId()
@@ -197,7 +176,7 @@ public class SonatypeNexus
             return getStringPropertyValue( NexusRemoteRepositoryStorageProviderVersion.class );
         }
 
-        public String getCustomization()
+        public String getUserUACustomization()
         {
             return getStringPropertyValue( NexusRemoteRepositoryStorageCustomization.class );
         }

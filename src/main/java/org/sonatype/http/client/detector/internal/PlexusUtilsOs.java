@@ -1,4 +1,4 @@
-package org.sonatype.http.client.detector;
+package org.sonatype.http.client.detector.internal;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -7,6 +7,8 @@ import java.util.Set;
 
 /**
  * Some methods providing compatibility for plexus-utils without being dependent on it.
+ * This code is copy+pasted from (org.codehaus.plexus : plexus-utils : 2.0.5) to not depent on PU, but still,
+ * provide "loosely coupled" common compatibility wrt "OS families".
  * 
  * @author cstamas
  */
