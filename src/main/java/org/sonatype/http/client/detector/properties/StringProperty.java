@@ -1,7 +1,7 @@
 package org.sonatype.http.client.detector.properties;
 
 public abstract class StringProperty
-    extends AbstractProperty<String>
+    extends AbstractProperty
 {
     public StringProperty( final String value )
     {

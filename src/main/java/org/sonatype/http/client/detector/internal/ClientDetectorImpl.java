@@ -9,15 +9,12 @@ import javax.inject.Singleton;
 
 import org.sonatype.http.client.detector.Client;
 import org.sonatype.http.client.detector.ClientDetector;
-import org.sonatype.http.client.detector.ClientMatch;
-import org.sonatype.http.client.detector.ClientMatcher;
 
 @Named
 @Singleton
 public class ClientDetectorImpl
     implements ClientDetector
 {
-
     private final List<ClientMatcher> matchers;
 
     @Inject

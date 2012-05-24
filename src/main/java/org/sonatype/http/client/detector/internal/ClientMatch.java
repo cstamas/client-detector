@@ -1,4 +1,6 @@
-package org.sonatype.http.client.detector;
+package org.sonatype.http.client.detector.internal;
+
+import org.sonatype.http.client.detector.Client;
 
 /**
  * A comparable client match holds the score of the match and the client instance.

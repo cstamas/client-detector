@@ -1,6 +1,7 @@
-package org.sonatype.http.client.detector;
+package org.sonatype.http.client.detector.internal;
 
 import java.util.List;
+
 
 /**
  * Matcher for one single client (the granularity depends on the "resolution" you want to achieve). It knows all about

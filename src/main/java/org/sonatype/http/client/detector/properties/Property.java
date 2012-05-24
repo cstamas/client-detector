@@ -1,8 +1,6 @@
 package org.sonatype.http.client.detector.properties;
 
-public interface Property<T>
+public interface Property
 {
     String stringValue();
-
-    T value();
 }

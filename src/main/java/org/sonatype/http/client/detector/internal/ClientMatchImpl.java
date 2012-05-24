@@ -1,7 +1,6 @@
 package org.sonatype.http.client.detector.internal;
 
 import org.sonatype.http.client.detector.Client;
-import org.sonatype.http.client.detector.ClientMatch;
 
 /**
  * Default implementation of ClientMatch.

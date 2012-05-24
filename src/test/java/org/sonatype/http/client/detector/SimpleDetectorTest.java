@@ -31,25 +31,25 @@ public class SimpleDetectorTest
         assertNotNull( client );
 
         assertEquals( "nexus", client.getClientFamily() );
-        assertEquals( "rrs", client.getProperty( ClientSubsystem.class ).value() );
-        assertEquals( "mac", client.getProperty( ClientOsFamily.class ).value() );
+        assertEquals( "rrs", client.getProperty( ClientSubsystem.class ).stringValue() );
+        assertEquals( "mac", client.getProperty( ClientOsFamily.class ).stringValue() );
         assertEquals( SonatypeNexus.FAMILY, client.getClientFamily() );
         assertEquals( "1", client.getClientMajorVersionString() );
         assertEquals( "1.9.0", client.getClientFullVersionString() );
 
-        assertEquals( true, client.hasProperty( IsStateless.class ) );
-        assertEquals( true, client.hasProperty( IsCliTool.class ) );
+        assertEquals( true, client.is( IsStateless.class, true ) );
+        assertEquals( true, client.is( IsCliTool.class, true ) );
 
         assertTrue( client instanceof NexusClient );
 
         NexusClient nexusClient = (NexusClient) client;
 
-        assertEquals( "OSS", nexusClient.getProperty( ClientEdition.class ).value() );
-        assertEquals( "Mac OS X", nexusClient.getProperty( JavaOsName.class ).value() );
-        assertEquals( "10.6.6", nexusClient.getProperty( JavaOsVersion.class ).value() );
-        assertEquals( "x86_64", nexusClient.getProperty( JavaOsArch.class ).value() );
-        assertEquals( "1.6.22_22", nexusClient.getProperty( JavaVersion.class ).value() );
-        assertEquals( false, nexusClient.hasProperty( JavaVendor.class ) );
+        assertEquals( "OSS", nexusClient.getProperty( ClientEdition.class ).stringValue() );
+        assertEquals( "Mac OS X", nexusClient.getProperty( JavaOsName.class ).stringValue() );
+        assertEquals( "10.6.6", nexusClient.getProperty( JavaOsVersion.class ).stringValue() );
+        assertEquals( "x86_64", nexusClient.getProperty( JavaOsArch.class ).stringValue() );
+        assertEquals( "1.6.22_22", nexusClient.getProperty( JavaVersion.class ).stringValue() );
+        assertEquals( false, nexusClient.has( JavaVendor.class ) );
 
         assertEquals( "httpClient", nexusClient.getRrsProviderId() );
         assertEquals( "1.9.0", nexusClient.getRrsProviderVersion() );
@@ -69,25 +69,25 @@ public class SimpleDetectorTest
         assertNotNull( client );
 
         assertEquals( "nexus", client.getClientFamily() );
-        assertFalse( client.hasProperty( ClientSubsystem.class ) );
-        assertEquals( "mac", client.getProperty( ClientOsFamily.class ).value() );
+        assertFalse( client.has( ClientSubsystem.class ) );
+        assertEquals( true, client.is( ClientOsFamily.class, "mac" ) );
         assertEquals( SonatypeNexus.FAMILY, client.getClientFamily() );
         assertEquals( "1", client.getClientMajorVersionString() );
         assertEquals( "1.9.0", client.getClientFullVersionString() );
 
-        assertEquals( true, client.hasProperty( IsStateless.class ) );
-        assertEquals( true, client.hasProperty( IsCliTool.class ) );
+        assertEquals( true, client.is( IsStateless.class, true ) );
+        assertEquals( true, client.is( IsCliTool.class, true ) );
 
         assertTrue( client instanceof NexusClient );
 
         NexusClient nexusClient = (NexusClient) client;
 
-        assertEquals( "Pro", nexusClient.getProperty( ClientEdition.class ).value() );
-        assertEquals( "Mac OS X", nexusClient.getProperty( JavaOsName.class ).value() );
-        assertEquals( "10.6.6", nexusClient.getProperty( JavaOsVersion.class ).value() );
-        assertEquals( "x86_64", nexusClient.getProperty( JavaOsArch.class ).value() );
-        assertEquals( "1.6.22_22", nexusClient.getProperty( JavaVersion.class ).value() );
-        assertEquals( false, nexusClient.hasProperty( JavaVendor.class ) );
+        assertEquals( "Pro", nexusClient.getProperty( ClientEdition.class ).stringValue() );
+        assertEquals( "Mac OS X", nexusClient.getProperty( JavaOsName.class ).stringValue() );
+        assertEquals( "10.6.6", nexusClient.getProperty( JavaOsVersion.class ).stringValue() );
+        assertEquals( "x86_64", nexusClient.getProperty( JavaOsArch.class ).stringValue() );
+        assertEquals( "1.6.22_22", nexusClient.getProperty( JavaVersion.class ).stringValue() );
+        assertEquals( false, nexusClient.has( JavaVendor.class ) );
 
         assertNull( nexusClient.getRrsProviderId() );
         assertNull( nexusClient.getRrsProviderVersion() );

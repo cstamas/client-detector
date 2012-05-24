@@ -1,10 +1,18 @@
 package org.sonatype.http.client.detector.properties;
 
 public abstract class BooleanProperty
-    extends AbstractProperty<Boolean>
+    extends AbstractProperty
 {
+    private final boolean value;
+
     public BooleanProperty( final boolean value )
     {
-        super( value );
+        super( Boolean.toString( value ) );
+        this.value = value;
+    }
+
+    public boolean booleanValue()
+    {
+        return value;
     }
 }

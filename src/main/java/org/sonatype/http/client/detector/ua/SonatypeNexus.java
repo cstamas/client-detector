@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.http.client.detector.ClientMatch;
-import org.sonatype.http.client.detector.ClientMatcher;
 import org.sonatype.http.client.detector.internal.ClientImpl;
+import org.sonatype.http.client.detector.internal.ClientMatch;
 import org.sonatype.http.client.detector.internal.ClientMatchImpl;
+import org.sonatype.http.client.detector.internal.ClientMatcher;
 import org.sonatype.http.client.detector.internal.PlexusUtilsOs;
 import org.sonatype.http.client.detector.properties.ClientEdition;
 import org.sonatype.http.client.detector.properties.ClientFullVersion;
@@ -98,12 +98,12 @@ public class SonatypeNexus
         properties.add( new ClientOsFamily( clientOsFamily ) );
         properties.add( new ClientMajorVersion( clientMajorVersionString ) );
         properties.add( new ClientFullVersion( clientFullVersionString ) );
+        properties.add( new ClientEdition( edition ) );
 
         properties.add( new JavaOsName( osName ) );
         properties.add( new JavaOsVersion( osVersion ) );
         properties.add( new JavaOsArch( osArch ) );
         properties.add( new JavaVersion( javaVersion ) );
-        properties.add( new ClientEdition( edition ) );
 
         // Nexus specific properties
         // edition
@@ -168,17 +168,17 @@ public class SonatypeNexus
 
         public String getRrsProviderId()
         {
-            return getStringPropertyValue( NexusRemoteRepositoryStorageProviderId.class );
+            return getPropertyStringValueOrNull( NexusRemoteRepositoryStorageProviderId.class );
         }
 
         public String getRrsProviderVersion()
         {
-            return getStringPropertyValue( NexusRemoteRepositoryStorageProviderVersion.class );
+            return getPropertyStringValueOrNull( NexusRemoteRepositoryStorageProviderVersion.class );
         }
 
         public String getUserUACustomization()
         {
-            return getStringPropertyValue( NexusRemoteRepositoryStorageCustomization.class );
+            return getPropertyStringValueOrNull( NexusRemoteRepositoryStorageCustomization.class );
         }
     }
 }

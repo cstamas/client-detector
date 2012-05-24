@@ -1,5 +1,6 @@
 package org.sonatype.http.client.detector.internal;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,19 +9,17 @@ import org.sonatype.http.client.detector.Client;
 import org.sonatype.http.client.detector.properties.BooleanProperty;
 import org.sonatype.http.client.detector.properties.ClientFullVersion;
 import org.sonatype.http.client.detector.properties.ClientMajorVersion;
-import org.sonatype.http.client.detector.properties.ClientOsFamily;
 import org.sonatype.http.client.detector.properties.Property;
 import org.sonatype.http.client.detector.properties.StringProperty;
 
 /**
  * Default implementation of Client interface.
- *
+ * 
  * @author cstamas
  */
 public class ClientImpl
     implements Client
 {
-
     private final String clientFamily;
 
     private final Map<Class<? extends Property>, Property> properties;
@@ -28,15 +27,15 @@ public class ClientImpl
     public ClientImpl( final String clientFamily, final List<Property> properties )
     {
         this.clientFamily = clientFamily;
-
-        this.properties = new HashMap<Class<? extends Property>, Property>();
+        final Map<Class<? extends Property>, Property> props = new HashMap<Class<? extends Property>, Property>();
         if ( properties != null )
         {
             for ( Property property : properties )
             {
-                addProperty( property );
+                props.put( property.getClass(), property );
             }
         }
+        this.properties = Collections.unmodifiableMap( props );
     }
 
     @Override
@@ -48,71 +47,72 @@ public class ClientImpl
     @Override
     public String getClientMajorVersionString()
     {
-        return getStringPropertyValue( ClientMajorVersion.class );
+        return getPropertyStringValueOrNull( ClientMajorVersion.class );
     }
 
     @Override
     public String getClientFullVersionString()
     {
-        return getStringPropertyValue( ClientFullVersion.class );
+        return getPropertyStringValueOrNull( ClientFullVersion.class );
     }
 
     @Override
-    public <P extends Property> P getProperty( Class<P> clazz )
-    {
-        P prop = (P) getProperties().get( clazz );
-
-        if ( prop != null )
-        {
-            return prop;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    @Override
-    public <P extends Property> boolean hasProperty( Class<P> clazz )
-    {
-        P property = getProperty( clazz );
-
-        if ( property != null )
-        {
-            if ( property instanceof BooleanProperty )
-            {
-                return ( (BooleanProperty) property ).value();
-            }
-            else
-            {
-                return property.stringValue() != null;
-            }
-        }
-
-        return false;
-    }
-
-    // ==
-
-    protected Map<Class<? extends Property>, Property> getProperties()
+    public Map<Class<? extends Property>, Property> getProperties()
     {
         return properties;
     }
 
-    protected void addProperty( Property p )
+    @Override
+    public <P extends Property> P getProperty( final Class<P> clazz )
     {
-        properties.put( p.getClass(), p );
+        return clazz.cast( properties.get( clazz ) );
     }
 
-    protected <P extends StringProperty> String getStringPropertyValue( Class<P> clazz )
+    @Override
+    public <P extends Property> boolean has( final Class<P> clazz )
     {
-        StringProperty sp = getProperty( clazz );
+        return getProperty( clazz ) != null;
+    }
 
-        if ( sp != null )
+    @Override
+    public <P extends StringProperty> boolean is( final Class<P> clazz, final String expected )
+    {
+        final P property = getProperty( clazz );
+        if ( property == null )
         {
-            return sp.value();
+            return false;
         }
 
-        return null;
+        return ( expected == null ? property.stringValue() == null : expected.equals( property.stringValue() ) );
     }
+
+    @Override
+    public <P extends BooleanProperty> boolean is( Class<P> clazz, boolean expected )
+    {
+        final P property = getProperty( clazz );
+        if ( property == null )
+        {
+            return false;
+        }
+
+        return expected == property.booleanValue();
+    }
+
+    // ==
+
+    protected <P extends Property> String getPropertyStringValueOrNull( final Class<P> clazz )
+    {
+        return getPropertyStringValueOrNull( getProperty( clazz ) );
+    }
+
+    protected String getPropertyStringValueOrNull( final Property prop )
+    {
+        if ( prop == null )
+        {
+            return null;
+        }
+
+        return prop.stringValue();
+    }
+
 }

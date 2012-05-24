@@ -3,8 +3,8 @@ package org.sonatype.http.client.detector.ua;
 import java.util.Collections;
 import java.util.List;
 
-import org.sonatype.http.client.detector.ClientMatch;
-import org.sonatype.http.client.detector.ClientMatcher;
+import org.sonatype.http.client.detector.internal.ClientMatch;
+import org.sonatype.http.client.detector.internal.ClientMatcher;
 
 public abstract class AbstractClientMatcher
     implements ClientMatcher
